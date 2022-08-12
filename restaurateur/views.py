@@ -68,15 +68,10 @@ def view_products(request):
     restaurants = list(Restaurant.objects.order_by('name'))
     products = list(Product.objects.prefetch_related('menu_items'))
 
-    default_availability = {restaurant.id: False for restaurant in restaurants}
     products_with_restaurants = []
     for product in products:
-
-        availability = {
-            **default_availability,
-            **{item.restaurant_id: item.availability for item in product.menu_items.all()},
-        }
-        ordered_availability = [availability[restaurant.id] for restaurant in restaurants]
+        availability = {item.restaurant_id: item.availability for item in product.menu_items.all()}
+        ordered_availability = [availability.get(restaurant.id, False) for restaurant in restaurants]
 
         products_with_restaurants.append(
             (product, ordered_availability)
