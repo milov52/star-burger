@@ -26,7 +26,7 @@
         <th>Действия</th>
       </tr>
 
-      {% for product, availability in products_with_restaurants %}
+      {% for product, availability in products_with_restaurant_availability %}
         <tr>
           <td><img src="{{product.image.url}}" alt="{{product.name}}" height="50px"></td>
           <td>{{product.name}}</td>
