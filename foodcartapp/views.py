@@ -3,6 +3,9 @@ import json
 from django.http import JsonResponse
 from django.templatetags.static import static
 from phonenumber_field.phonenumber import PhoneNumber
+from rest_framework.decorators import api_view
+
+
 
 from .models import Order
 from .models import OrderDetail
@@ -61,6 +64,7 @@ def product_list_api(request):
     })
 
 
+@api_view(['POST'])
 def register_order(request):
     try:
         data = json.loads(request.body.decode())
@@ -68,7 +72,7 @@ def register_order(request):
         return JsonResponse({
             "error": "Ошибка данных",
         })
-
+    print(data)
     order = Order.objects.create(
         firstname=data.get('firstname'),
         lastname=data.get('lastname'),
@@ -84,3 +88,4 @@ def register_order(request):
             order=order
         )
     return JsonResponse({})
+    # return Response(order)
