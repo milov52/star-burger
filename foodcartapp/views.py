@@ -5,8 +5,6 @@ from django.templatetags.static import static
 from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.decorators import api_view
 
-
-
 from .models import Order
 from .models import OrderDetail
 from .models import Product
@@ -72,7 +70,8 @@ def register_order(request):
         return JsonResponse({
             "error": "Ошибка данных",
         })
-    print(data)
+
+    print(request.data)
     order = Order.objects.create(
         firstname=data.get('firstname'),
         lastname=data.get('lastname'),
@@ -81,6 +80,15 @@ def register_order(request):
     )
 
     products = data.get('products')
+    if not isinstance(products, list):
+        return JsonResponse(
+            {"error": f"products: Ожидался list со значениями, но был получен {type(products)}"}
+        )
+    elif not products:
+        return JsonResponse(
+            {"error": f"products: Это поле не может быть пустым."}
+        )
+
     for product in products:
         order_detail = OrderDetail.objects.create(
             product=Product.objects.get(pk=product.get('product')),
@@ -88,4 +96,4 @@ def register_order(request):
             order=order
         )
     return JsonResponse({})
-    # return Response(order)
+        # return Response(order)
