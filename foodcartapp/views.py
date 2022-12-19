@@ -1,7 +1,11 @@
+import json
+
 from django.http import JsonResponse
 from django.templatetags.static import static
+from phonenumber_field.phonenumber import PhoneNumber
 
-
+from .models import Order
+from .models import OrderDetail
 from .models import Product
 
 
@@ -58,5 +62,25 @@ def product_list_api(request):
 
 
 def register_order(request):
-    # TODO это лишь заглушка
+    try:
+        data = json.loads(request.body.decode())
+    except ValueError:
+        return JsonResponse({
+            "error": "Ошибка данных",
+        })
+
+    order = Order.objects.create(
+        firstname=data.get('firstname'),
+        lastname=data.get('lastname'),
+        phonenumber=PhoneNumber.from_string(data.get('phonenumber'), "RU"),
+        address=data.get('address')
+    )
+
+    products = data.get('products')
+    for product in products:
+        order_detail = OrderDetail.objects.create(
+            product=Product.objects.get(pk=product.get('product')),
+            quantity=product.get('quantity'),
+            order=order
+        )
     return JsonResponse({})

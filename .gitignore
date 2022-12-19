@@ -1,4 +1,4 @@
-bundles/**
+./bundles/**
 node_modules/
 media/
 
