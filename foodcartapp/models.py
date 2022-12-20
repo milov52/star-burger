@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -172,6 +174,17 @@ class Order(models.Model):
         'комментарий',
         blank=True
     )
+
+    registered_at = models.DateTimeField(
+        'зарегистрирован',
+        default=timezone.now(),
+        db_index=True
+    )
+
+    called_at = models.DateTimeField('совершен звонок', blank=True, null=True)
+    dellivired_at = models.DateTimeField('доставлен', db_index=True, blank=True, null=True)
+
+
 
     objects = OrderQuerySet.as_manager()
 
