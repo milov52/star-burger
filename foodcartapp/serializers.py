@@ -1,10 +1,9 @@
-from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import ModelSerializer
 from phonenumber_field.serializerfields import PhoneNumberField
+from rest_framework.serializers import ModelSerializer
 
-
-from .models import OrderProducts
 from .models import Order
+from .models import OrderProducts
+
 
 class OrderProductsSerializer(ModelSerializer):
     class Meta:
@@ -13,14 +12,9 @@ class OrderProductsSerializer(ModelSerializer):
 
 
 class OrderSerializer(ModelSerializer):
-    products = OrderProductsSerializer(many=True)
+    products = OrderProductsSerializer(many=True, allow_empty=False, write_only=True)
     phonenumber = PhoneNumberField(region="RU")
 
     class Meta:
         model = Order
-        fields = ['firstname', 'lastname', 'phonenumber', 'address', 'products']
-
-    def validate_products(self, products):
-        if not products:
-            raise ValidationError('Этот список не может быть пустым')
-        return products
+        fields = ['id', 'firstname', 'lastname', 'phonenumber', 'address', 'products']

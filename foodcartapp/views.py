@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.templatetags.static import static
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .models import Order
 from .models import OrderProducts
@@ -76,9 +77,4 @@ def register_order(request):
     order_products = [OrderProducts(order=order, **fields) for fields in products_fields]
     OrderProducts.objects.bulk_create(order_products)
 
-    return JsonResponse({})
-
-    # return Response({
-    #     'application_id': application.id,
-    # })
-    #
+    return Response(serializer.data)
