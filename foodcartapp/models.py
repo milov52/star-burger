@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import F, Q, Sum
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -125,7 +126,27 @@ class RestaurantMenuItem(models.Model):
         return f"{self.restaurant.name} - {self.product.name}"
 
 
+class OrderQuerySet(models.QuerySet):
+    def available(self):
+        orders = (
+            Order.objects
+            .filter(~Q(status='F'))
+            .order_by('id')
+        )
+        return orders.annotate(
+            order_amount=Sum(F('orderproducts__quantity') * F('orderproducts__price'))
+        )
+
+
 class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('N', 'Необработанный'),
+        ('С', 'Согласован с клиентом'),
+        ('A', 'Собран'),
+        ('D', 'В доставке'),
+        ('F', 'Выполнен'),
+    ]
+
     firstname = models.CharField(
         'имя',
         max_length=20)
@@ -140,6 +161,15 @@ class Order(models.Model):
         'мобильный телефон',
         region='RU'
     )
+    status = models.CharField(
+        'статус заказа',
+        choices=ORDER_STATUS_CHOICES,
+        default='N',
+        db_index=True,
+        max_length=2
+    )
+
+    objects = OrderQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'заказ'

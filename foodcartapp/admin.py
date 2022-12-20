@@ -25,6 +25,7 @@ class OrderAdmin(admin.ModelAdmin):
         'lastname',
         'address',
         'phonenumber',
+        'status'
     ]
 
     inlines = [
