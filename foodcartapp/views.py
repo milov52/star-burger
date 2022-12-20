@@ -1,13 +1,11 @@
-import json
-
 from django.http import JsonResponse
 from django.templatetags.static import static
-from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.decorators import api_view
 
 from .models import Order
-from .models import OrderDetail
+from .models import OrderProducts
 from .models import Product
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -64,36 +62,23 @@ def product_list_api(request):
 
 @api_view(['POST'])
 def register_order(request):
-    try:
-        data = json.loads(request.body.decode())
-    except ValueError:
-        return JsonResponse({
-            "error": "Ошибка данных",
-        })
+    serializer = OrderSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    print(request.data)
     order = Order.objects.create(
-        firstname=data.get('firstname'),
-        lastname=data.get('lastname'),
-        phonenumber=PhoneNumber.from_string(data.get('phonenumber'), "RU"),
-        address=data.get('address')
+        firstname=serializer.validated_data['firstname'],
+        lastname=serializer.validated_data['lastname'],
+        phonenumber=serializer.validated_data['phonenumber'],
+        address=serializer.validated_data['address'],
     )
 
-    products = data.get('products')
-    if not isinstance(products, list):
-        return JsonResponse(
-            {"error": f"products: Ожидался list со значениями, но был получен {type(products)}"}
-        )
-    elif not products:
-        return JsonResponse(
-            {"error": f"products: Это поле не может быть пустым."}
-        )
+    products_fields = serializer.validated_data['products']
+    order_products = [OrderProducts(order=order, **fields) for fields in products_fields]
+    OrderProducts.objects.bulk_create(order_products)
 
-    for product in products:
-        order_detail = OrderDetail.objects.create(
-            product=Product.objects.get(pk=product.get('product')),
-            quantity=product.get('quantity'),
-            order=order
-        )
     return JsonResponse({})
-        # return Response(order)
+
+    # return Response({
+    #     'application_id': application.id,
+    # })
+    #

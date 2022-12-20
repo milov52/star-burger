@@ -146,7 +146,7 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.firstname} {self.lastname} {self.address}"
 
-class OrderDetail(models.Model):
+class OrderProducts(models.Model):
     order = models.ForeignKey(Order,
                               on_delete=models.CASCADE,
                               related_name='order_details',

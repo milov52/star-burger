@@ -4,14 +4,14 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 
 from .models import Order
-from .models import OrderDetail
+from .models import OrderProducts
 from .models import Product
 from .models import ProductCategory
 from .models import Restaurant
 from .models import RestaurantMenuItem
 
 class OrderDetailItemInline(admin.TabularInline):
-    model = OrderDetail
+    model = OrderProducts
     extra = 0
 
 @admin.register(Order)
