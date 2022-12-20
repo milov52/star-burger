@@ -1,6 +1,8 @@
-from django.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+
 
 class Restaurant(models.Model):
     name = models.CharField(
@@ -146,7 +148,13 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.firstname} {self.lastname} {self.address}"
 
-class OrderProducts(models.Model):
+
+def validate_positive(price):
+    if price < 0:
+        raise ValidationError('Стоимость должна быть положительной')
+
+
+class OrderProduct(models.Model):
     order = models.ForeignKey(Order,
                               on_delete=models.CASCADE,
                               related_name='orderproducts',
@@ -157,6 +165,11 @@ class OrderProducts(models.Model):
                                 related_name='orderproducts',
                                 verbose_name='продукт')
     quantity = models.SmallIntegerField('количество')
+    price = models.DecimalField('цена',
+                                max_digits=5,
+                                decimal_places=2,
+                                validators=[validate_positive]
+                                )
 
     class Meta:
         verbose_name = 'элемент заказа'

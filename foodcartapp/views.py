@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Order
-from .models import OrderProducts
+from .models import OrderProduct
 from .models import Product
 from .serializers import OrderSerializer
 
@@ -74,7 +74,7 @@ def register_order(request):
     )
 
     products_fields = serializer.validated_data['products']
-    order_products = [OrderProducts(order=order, **fields) for fields in products_fields]
-    OrderProducts.objects.bulk_create(order_products)
+    order_products = [OrderProduct(order=order, price=fields.get('product').price, **fields) for fields in products_fields]
+    OrderProduct.objects.bulk_create(order_products)
 
     return Response(serializer.data)

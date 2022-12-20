@@ -93,8 +93,8 @@ def view_restaurants(request):
 def view_orders(request):
 
     order_items = Order.objects.annotate(
-        order_amount=Sum(F('orderproducts__quantity') * F('orderproducts__product__price'))
-    )
+        order_amount=Sum(F('orderproducts__quantity') * F('orderproducts__price'))
+    ).order_by('id')
     return render(request, template_name='order_items.html', context={
         "order_items": order_items,
     })

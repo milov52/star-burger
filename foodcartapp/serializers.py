@@ -2,13 +2,14 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework.serializers import ModelSerializer
 
 from .models import Order
-from .models import OrderProducts
+from .models import OrderProduct
 
 
 class OrderProductsSerializer(ModelSerializer):
     class Meta:
-        model = OrderProducts
+        model = OrderProduct
         fields = ['product', 'quantity']
+
 
 
 class OrderSerializer(ModelSerializer):

@@ -4,19 +4,20 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 
 from .models import Order
-from .models import OrderProducts
+from .models import OrderProduct
 from .models import Product
 from .models import ProductCategory
 from .models import Restaurant
 from .models import RestaurantMenuItem
 
 class OrderDetailItemInline(admin.TabularInline):
-    model = OrderProducts
+    model = OrderProduct
     extra = 0
 
 @admin.register(Order)
-class CustomerAdmin(admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'firstname',
         'lastname',
         'address',
@@ -26,7 +27,6 @@ class CustomerAdmin(admin.ModelAdmin):
     inlines = [
         OrderDetailItemInline
     ]
-
 
 class RestaurantMenuItemInline(admin.TabularInline):
     model = RestaurantMenuItem
