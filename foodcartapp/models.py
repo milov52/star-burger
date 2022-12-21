@@ -141,18 +141,18 @@ class OrderQuerySet(models.QuerySet):
 
 
 class Order(models.Model):
-    NEW = 'N'
-    CALLED = 'C'
-    ASSEMBLED = 'A'
-    DELIEVERY = 'D'
-    FINISH = 'F'
+    STATUS_NEW = 'N'
+    STATUS_CALLED = 'C'
+    STATUS_ASSEMBLED = 'A'
+    STATUS_DELIEVERY = 'D'
+    STATUS_FINISH = 'F'
 
     ORDER_STATUS_CHOICES = [
-        (NEW, 'Необработанный'),
-        (CALLED, 'Согласован с клиентом'),
-        (ASSEMBLED, 'Собран'),
-        (DELIEVERY, 'В доставке'),
-        (FINISH, 'Выполнен'),
+        (STATUS_NEW, 'Необработанный'),
+        (STATUS_CALLED, 'Изготавливается'),
+        (STATUS_ASSEMBLED, 'Собран'),
+        (STATUS_DELIEVERY, 'В доставке'),
+        (STATUS_FINISH, 'Выполнен'),
     ]
 
     CASH = 'C'
@@ -181,7 +181,7 @@ class Order(models.Model):
     status = models.CharField(
         'статус заказа',
         choices=ORDER_STATUS_CHOICES,
-        default=NEW,
+        default=STATUS_NEW,
         db_index=True,
         max_length=2
     )
@@ -207,6 +207,10 @@ class Order(models.Model):
     called_at = models.DateTimeField('совершен звонок', blank=True, null=True)
     dellivired_at = models.DateTimeField('доставлен', db_index=True, blank=True, null=True)
 
+    restaurant = models.ForeignKey(Restaurant,
+                                    on_delete=models.CASCADE,
+                                    verbose_name='ресторан',
+                                    null=True)
 
 
     objects = OrderQuerySet.as_manager()

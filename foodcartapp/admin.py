@@ -24,8 +24,13 @@ class OrderAdmin(admin.ModelAdmin):
         OrderDetailItemInline
     ]
 
+
     def response_change(self, request, obj):
         response = super().response_change(request, obj)
+
+        if obj.restaurant and obj.status == Order.STATUS_NEW:
+            obj.status = Order.STATUS_CALLED
+            obj.save()
 
         if url_has_allowed_host_and_scheme(
             url=request.GET.get("next", None),

@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import F, Sum
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -92,6 +91,22 @@ def view_restaurants(request):
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
     order_items = Order.objects.available()
+
+    order_with_restaurants = []
+    for order in order_items:
+        restaurant_availability = set()
+        products = [order_products.product for order_products in order.orderproducts.all()]
+        for product in products:
+            availability = [item.restaurant.name for item in product.menu_items.all() if item.availability]
+
+            if not restaurant_availability:
+                restaurant_availability = set(availability)
+            else:
+                restaurant_availability = restaurant_availability & set(availability)
+
+        order_with_restaurants.append(
+            (order, restaurant_availability)
+        )
     return render(request, template_name='order_items.html', context={
-        "order_items": order_items,
+        "order_items": order_with_restaurants,
     })

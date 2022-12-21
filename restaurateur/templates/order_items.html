@@ -11,32 +11,54 @@
   <br/>
   <br/>
   <div class="container">
-   <table class="table table-responsive">
-    <tr>
-      <th>ID заказа</th>
-      <th>Статус</th>
-      <th>Способ оплаты</th>
-      <th>Стоимость заказа</th>
-      <th>Клиент</th>
-      <th>Телефон</th>
-      <th>Адрес доставки</th>
-      <th>Комментарий</th>
-      <th>Ссылка на админку</th>
-    </tr>
-
-    {% for item in order_items %}
+    <table class="table table-responsive">
       <tr>
-        <td>{{item.id}}</td>
-        <td>{{item.get_payment_method_display}}</td>
-        <td>{{item.get_status_display}}</td>
-        <td>{{item.order_amount}}</td>
-        <td>{{item.firstname}} {{item.lastname}}</td>
-        <td>{{item.phonenumber}}</td>
-        <td>{{item.address}}</td>
-        <td>{{item.comments}}</td>
-        <td><a href="{% url 'admin:foodcartapp_order_change' item.id %}?next={{ request.path }}">Редактировать</a></td>
+        <th>ID заказа</th>
+        <th>Статус</th>
+        <th>Способ оплаты</th>
+        <th>Стоимость заказа</th>
+        <th>Клиент</th>
+        <th>Телефон</th>
+        <th>Адрес доставки</th>
+        <th>Комментарий</th>
+        <th>Рестораны</th>
+        <th>Ссылка на админку</th>
       </tr>
-    {% endfor %}
-   </table>
+
+      {% for order, restaurants in order_items %}
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.get_payment_method_display }}</td>
+          <td>{{ order.get_status_display }}</td>
+          <td>{{ order.order_amount }}</td>
+          <td>{{ order.firstname }} {{ item.lastname }}</td>
+          <td>{{ order.phonenumber }}</td>
+          <td>{{ order.address }}</td>
+          <td>{{ order.comments }}</td>
+          <td>
+            {% if order.restaurant %}
+              Готовит {{ order.restaurant.name }}
+            {% else %}
+              {% if restaurants %}
+                Может быть приготовлен ресторанами
+                <details>
+                <ul>
+                  {% for restaurant in restaurants %}
+                    <li>{{ restaurant }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                Нет возможности изготовить!
+              {% endif %}
+            {% endif %}
+            </details>
+          </td>
+
+          <td><a
+            href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}&restaurant={{ restaurants }}">Редактировать</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
   </div>
 {% endblock %}
