@@ -139,7 +139,6 @@ class OrderQuerySet(models.QuerySet):
             order_amount=Sum(F('orderproducts__quantity') * F('orderproducts__price'))
         )
 
-
 class Order(models.Model):
     STATUS_NEW = 'N'
     STATUS_CALLED = 'C'
@@ -161,8 +160,6 @@ class Order(models.Model):
         (CASH, 'Наличными'),
         (ELECTRON, 'Электронно')
     ]
-
-
 
     firstname = models.CharField(
         'имя',
@@ -210,6 +207,7 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant,
                                     on_delete=models.CASCADE,
                                     verbose_name='ресторан',
+                                    blank=True,
                                     null=True)
 
 

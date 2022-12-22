@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.templatetags.static import static
@@ -13,6 +12,8 @@ from .models import ProductCategory
 from .models import Restaurant
 from .models import RestaurantMenuItem
 
+from geo_position.utils import add_geoposition
+
 class OrderDetailItemInline(admin.TabularInline):
     model = OrderProduct
     extra = 0
@@ -24,9 +25,9 @@ class OrderAdmin(admin.ModelAdmin):
         OrderDetailItemInline
     ]
 
-
     def response_change(self, request, obj):
         response = super().response_change(request, obj)
+        add_geoposition(obj.address)
 
         if obj.restaurant and obj.status == Order.STATUS_NEW:
             obj.status = Order.STATUS_CALLED
@@ -62,6 +63,10 @@ class RestaurantAdmin(admin.ModelAdmin):
         RestaurantMenuItemInline
     ]
 
+    def response_change(self, request, obj):
+        response = super().response_change(request, obj)
+        add_geoposition(obj.address)
+        return response
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.templatetags.static import static
@@ -7,6 +8,7 @@ from rest_framework.response import Response
 from .models import Order
 from .models import OrderProduct
 from .models import Product
+from geo_position.utils import add_geoposition
 from .serializers import OrderSerializer
 
 
@@ -68,6 +70,7 @@ def register_order(request):
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
+
     order = Order.objects.create(
         firstname=serializer.validated_data['firstname'],
         lastname=serializer.validated_data['lastname'],
@@ -76,7 +79,10 @@ def register_order(request):
     )
 
     products_fields = serializer.validated_data['products']
-    order_products = [OrderProduct(order=order, price=fields.get('product').price, **fields) for fields in products_fields]
+    order_products = [OrderProduct(
+        order=order,
+        price=fields.get('product').price, **fields) for fields in products_fields]
     OrderProduct.objects.bulk_create(order_products)
 
+    add_geoposition(order.address)
     return Response(serializer.data)

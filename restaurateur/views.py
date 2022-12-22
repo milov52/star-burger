@@ -9,8 +9,7 @@ from django.views import View
 from geopy import distance
 
 from foodcartapp.models import Order, Product, Restaurant
-from star_burger import settings
-
+from geo_position.models import GeoPosition
 
 class Login(forms.Form):
     username = forms.CharField(
@@ -111,16 +110,10 @@ def fetch_coordinates(apikey, address):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    api_key = settings.API_YANDEX_GEO_KEY
-
-    restaurants = list(Restaurant.objects.order_by('name'))
-    restaurants_coordinates = {restaurant: fetch_coordinates(api_key, restaurant.name) for restaurant in restaurants}
-
     order_items = Order.objects.available()
     order_with_restaurants = []
 
     for order in order_items:
-
         available_restaurants = set()
         products = [order_products.product for order_products in order.orderproducts.all()]
         for product in products:
@@ -131,12 +124,12 @@ def view_orders(request):
             else:
                 available_restaurants = available_restaurants & set(availability)
 
-        order_coordinates = fetch_coordinates(api_key, order.address)
-
+        order_coordinates = GeoPosition.objects.coordinates(address=order.address)
         restaurants_with_distance = {}
         for restaurant in available_restaurants:
+            restaurant_coordinates = GeoPosition.objects.coordinates(address=restaurant.address)
             restaurants_with_distance[restaurant] = round(
-                distance.distance(order_coordinates, restaurants_coordinates[restaurant]).km, 3
+                distance.distance(order_coordinates, restaurant_coordinates).km, 3
             )
 
         restaurants_with_distance = dict(sorted(restaurants_with_distance.items(), key=lambda item: item[1]))
