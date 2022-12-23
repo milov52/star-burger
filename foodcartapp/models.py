@@ -140,25 +140,17 @@ class OrderQuerySet(models.QuerySet):
         )
 
 class Order(models.Model):
-    STATUS_NEW = 'N'
-    STATUS_CALLED = 'C'
-    STATUS_ASSEMBLED = 'A'
-    STATUS_DELIEVERY = 'D'
-    STATUS_FINISH = 'F'
-
     ORDER_STATUS_CHOICES = [
-        (STATUS_NEW, 'Необработанный'),
-        (STATUS_CALLED, 'Изготавливается'),
-        (STATUS_ASSEMBLED, 'Собран'),
-        (STATUS_DELIEVERY, 'В доставке'),
-        (STATUS_FINISH, 'Выполнен'),
+        ('new', 'Необработанный'),
+        ('make', 'Изготавливается'),
+        ('assembled', 'Собран'),
+        ('delievery', 'В доставке'),
+        ('finish', 'Выполнен'),
     ]
 
-    CASH = 'C'
-    ELECTRON = 'E'
     ORDER_PAYMENT_METHODS = [
-        (CASH, 'Наличными'),
-        (ELECTRON, 'Электронно')
+        ('cash', 'Наличными'),
+        ('electron', 'Электронно')
     ]
 
     firstname = models.CharField(
@@ -178,9 +170,9 @@ class Order(models.Model):
     status = models.CharField(
         'статус заказа',
         choices=ORDER_STATUS_CHOICES,
-        default=STATUS_NEW,
+        default='new',
         db_index=True,
-        max_length=2
+        max_length=10
     )
     comments = models.TextField(
         'комментарий',
@@ -190,8 +182,8 @@ class Order(models.Model):
     payment_method = models.CharField(
         'cпособ оплаты',
         choices=ORDER_PAYMENT_METHODS,
-        default=CASH,
-        max_length=2,
+        default='cash',
+        max_length=10,
         db_index=True
     )
 

@@ -56,7 +56,7 @@
           </td>
 
           <td><a
-            href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}&restaurant={{ restaurants }}">Редактировать</a>
+            href="{% url 'admin:foodcartapp_order_change' order.id %}?next={{ request.path }}">Редактировать</a>
           </td>
         </tr>
       {% endfor %}
