@@ -211,7 +211,7 @@ class Order(models.Model):
         return f"{self.firstname} {self.lastname} {self.address}"
 
 
-def validate_positive(price):
+def validate_positive_price(price):
     if price < 0:
         raise ValidationError('Стоимость должна быть положительной')
 
@@ -231,7 +231,7 @@ class OrderProduct(models.Model):
     price = models.DecimalField('цена',
                                 max_digits=5,
                                 decimal_places=2,
-                                validators=[validate_positive]
+                                validators=[validate_positive_price]
                                 )
 
     class Meta:
