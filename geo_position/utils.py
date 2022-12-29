@@ -1,7 +1,8 @@
 import requests
+from django.conf import settings
 
 from geo_position.models import GeoPosition
-from star_burger import settings
+
 
 
 # Create your views here.
