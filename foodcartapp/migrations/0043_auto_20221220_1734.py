@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.SmallIntegerField(verbose_name='количество')),
-                ('price', models.DecimalField(decimal_places=2, max_digits=5, validators=[foodcartapp.models.validate_positive])),
+                ('price', models.DecimalField(decimal_places=2, max_digits=5, validators=[foodcartapp.models.validate_positive_price])),
                 ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orderproducts', to='foodcartapp.order', verbose_name='заказ')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orderproducts', to='foodcartapp.product', verbose_name='продукт')),
             ],

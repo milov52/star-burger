@@ -1,5 +1,3 @@
-import re
-
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
@@ -31,7 +29,7 @@ class OrderAdmin(admin.ModelAdmin):
         response = super().response_change(request, obj)
         add_geoposition(obj.address)
 
-        if obj.restaurant and obj.status == 'new':
+        if obj.order_restaurant and obj.status == 'new':
             obj.status = 'make'
             obj.save()
 

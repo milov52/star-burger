@@ -134,7 +134,7 @@ def view_orders(request):
     for order in order_items:
         available_restaurants = set()
         products = [
-            order_products.product for order_products in order.orderproducts.all()
+            order_products.product for order_products in order.order_products.all()
         ]
         for product in products:
             availability = [

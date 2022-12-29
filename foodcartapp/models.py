@@ -135,7 +135,7 @@ class OrderQuerySet(models.QuerySet):
             .filter(~Q(status='F'))
         )
         return orders.annotate(
-            order_amount=Sum(F('orderproducts__quantity') * F('orderproducts__price'))
+            order_amount=Sum(F('order_products__quantity') * F('order_products__price'))
         )
 
 class Order(models.Model):

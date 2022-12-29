@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='orderproduct',
             name='price',
-            field=models.DecimalField(decimal_places=2, max_digits=5, validators=[foodcartapp.models.validate_positive], verbose_name='цена'),
+            field=models.DecimalField(decimal_places=2, max_digits=5, validators=[foodcartapp.models.validate_positive_price], verbose_name='цена'),
         ),
     ]
