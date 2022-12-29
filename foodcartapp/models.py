@@ -221,12 +221,12 @@ def validate_positive(price):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order,
                               on_delete=models.CASCADE,
-                              related_name='orderproducts',
+                              related_name='order_products',
                               verbose_name='заказ'
                               )
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
-                                related_name='orderproducts',
+                                related_name='order_products',
                                 verbose_name='продукт')
     quantity = models.SmallIntegerField('количество',
                                         validators=[MinValueValidator(1)])
