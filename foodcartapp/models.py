@@ -228,7 +228,8 @@ class OrderProduct(models.Model):
                                 on_delete=models.CASCADE,
                                 related_name='orderproducts',
                                 verbose_name='продукт')
-    quantity = models.SmallIntegerField('количество')
+    quantity = models.SmallIntegerField('количество',
+                                        validators=[MinValueValidator(1)])
     price = models.DecimalField('цена',
                                 max_digits=5,
                                 decimal_places=2,
