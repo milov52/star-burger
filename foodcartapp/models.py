@@ -196,7 +196,7 @@ class Order(models.Model):
     called_at = models.DateTimeField('совершен звонок', blank=True, null=True)
     dellivired_at = models.DateTimeField('доставлен', db_index=True, blank=True, null=True)
 
-    restaurant = models.ForeignKey(Restaurant,
+    order_restaurant = models.ForeignKey(Restaurant,
                                     on_delete=models.CASCADE,
                                     verbose_name='ресторан',
                                     blank=True,
