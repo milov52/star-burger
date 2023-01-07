@@ -13,6 +13,7 @@ class GeoPosition(models.Model):
         verbose_name="адрес",
         max_length=100,
         blank=True,
+        unique=True
     )
 
     longitude = models.FloatField(
