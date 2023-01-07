@@ -54,8 +54,11 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Определите переменные окружения `SECRET_KEY` (секретный ключ для работы с Django)
-и `API_YANDEX_GEO_KEY` (api ключ для работы с геокодером Яндекс Карт).
+Определите переменные окружения
+`SECRET_KEY` (секретный ключ для работы с Django)
+`API_YANDEX_GEO_KEY` (Данный ключ позволит получать кооординаты ресторанов для их дальнейшей обработки).
+Получить его можно в [кабинете разработчика](https://developer.tech.yandex.ru/):
+
 Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
