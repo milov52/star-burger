@@ -187,7 +187,7 @@ class Order(models.Model):
 
     registered_at = models.DateTimeField(
         'зарегистрирован',
-        default=timezone.now(),
+        auto_now_add=True,
         db_index=True
     )
 
