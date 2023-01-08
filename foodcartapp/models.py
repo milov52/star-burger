@@ -129,10 +129,10 @@ class RestaurantMenuItem(models.Model):
 
 
 class OrderQuerySet(models.QuerySet):
-    def available(self):
+    def unfinished(self):
         orders = (
             Order.objects
-            .filter(~Q(status='F'))
+            .filter(~Q(status='finish'))
         )
         return orders.annotate(
             order_amount=Sum(F('order_products__quantity') * F('order_products__price'))

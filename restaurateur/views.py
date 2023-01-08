@@ -128,7 +128,7 @@ def fetch_coordinates(apikey, address):
 
 @user_passes_test(is_manager, login_url="restaurateur:login")
 def view_orders(request):
-    order_items = Order.objects.available()
+    order_items = Order.objects.unfinished()
     order_with_restaurants = []
 
     for order in order_items:
