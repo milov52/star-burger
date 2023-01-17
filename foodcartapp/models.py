@@ -1,9 +1,7 @@
-from django.utils import timezone
-
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import Q
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -132,11 +130,8 @@ class OrderQuerySet(models.QuerySet):
     def unfinished(self):
         orders = (
             Order.objects
-            .filter(~Q(status='finish'))
-        )
-        return orders.annotate(
-            order_amount=Sum(F('order_products__quantity') * F('order_products__price'))
-        )
+            .filter(~Q(status='finish')))
+        return orders
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
