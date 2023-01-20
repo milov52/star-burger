@@ -19,10 +19,12 @@ class GeoPosition(models.Model):
     longitude = models.FloatField(
         verbose_name="долгота",
         validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)],
+        blank=True,
     )
     latitude = models.FloatField(
         verbose_name="широта",
         validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],
+        blank=True,
     )
 
     objects = GeoPositionQuerySet.as_manager()
