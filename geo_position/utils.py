@@ -26,7 +26,7 @@ def fetch_coordinates(apikey, address):
 
 
 def add_geoposition(address):
-    if GeoPosition.objects.filter(address=address).exists():
+    if GeoPosition.objects.filter(address=address):
         return None
 
     try:
