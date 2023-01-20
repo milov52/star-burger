@@ -130,8 +130,9 @@ class OrderQuerySet(models.QuerySet):
     def unfinished(self):
         orders = (
             Order.objects
-            .filter(~Q(status='finish')))
-        return orders
+            .filter(~Q(status='finish'))
+        )
+        return self.filter(pk__in=orders)
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [

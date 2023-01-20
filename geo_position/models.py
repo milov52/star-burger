@@ -4,8 +4,8 @@ from django.db import models
 
 class GeoPositionQuerySet(models.QuerySet):
     def coordinates(self, address):
-        coordinates = GeoPosition.objects.values_list("longitude", "latitude")
-        return coordinates.filter(address=address)
+        return self.filter(address=address)\
+                   .values_list("longitude", "latitude")
 
 
 class GeoPosition(models.Model):
