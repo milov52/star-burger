@@ -3,8 +3,6 @@ from django.conf import settings
 
 from geo_position.models import GeoPosition
 
-class CoordinateError(TypeError):
-    pass
 
 def fetch_coordinates(apikey, address):
     base_url = "https://geocode-maps.yandex.ru/1.x"
@@ -33,7 +31,7 @@ def add_geoposition(address):
 
     try:
         longitude, latitude = fetch_coordinates(settings.API_YANDEX_GEO_KEY, address)
-    except CoordinateError:
+    except TypeError:
         exit("Ошибка получения координат")
 
     GeoPosition.objects.create(
