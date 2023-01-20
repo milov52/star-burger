@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q, Sum
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -128,11 +128,9 @@ class RestaurantMenuItem(models.Model):
 
 class OrderQuerySet(models.QuerySet):
     def unfinished(self):
-        orders = (
-            Order.objects
-            .filter(~Q(status='finish'))
-        )
-        return self.filter(pk__in=orders)
+        return self.filter(~Q(status='finish')).annotate(
+                order_amount=Sum(F('order_products__quantity') * F('order_products__price'))
+            )
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [

@@ -3,7 +3,6 @@ from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import F, Sum
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -131,9 +130,7 @@ def get_suitable_restaurants(order, all_restaurant):
 
 @user_passes_test(is_manager, login_url="restaurateur:login")
 def view_orders(request):
-    order_items = Order.objects.unfinished().annotate(
-            order_amount=Sum(F('order_products__quantity') * F('order_products__price'))
-        )
+    order_items = Order.objects.unfinished()
 
     restaurants = Restaurant.objects.all()
     restaurant_coordinates = []
