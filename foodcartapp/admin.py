@@ -29,7 +29,7 @@ class OrderAdmin(admin.ModelAdmin):
         response = super().response_change(request, obj)
         add_geoposition(obj.address)
 
-        if obj.order_restaurant and obj.status == 'new':
+        if obj.cook_in and obj.status == 'new':
             obj.status = 'make'
             obj.save()
 
