@@ -125,17 +125,15 @@ def fetch_coordinates(apikey, address):
     lon, lat = most_relevant["GeoObject"]["Point"]["pos"].split(" ")
     return lon, lat
 
-def get_suitable_restaurants(order, all_restaurant):
-    order_product_list = [item.product.id for item in order.items.all()]
 
 @user_passes_test(is_manager, login_url="restaurateur:login")
 def view_orders(request):
-    order_items = Order.objects.unfinished()
+    order_items = Order.objects.unfinished().amount()
 
     restaurants = Restaurant.objects.all()
     restaurant_coordinates = []
     for restaurant in restaurants:
-        restaurant_coordinates = {restaurant.id : GeoPosition.objects.coordinates(
+        restaurant_coordinates = {restaurant.id: GeoPosition.objects.coordinates(
             address=restaurant.address)}
 
     order_with_restaurants = []
@@ -164,7 +162,7 @@ def view_orders(request):
             if restaurant.id in restaurant_coordinates.keys():
                 restaurants_with_distance[restaurant] = round(
                     distance.distance(order_coordinates, restaurant_coordinates[restaurant.id]).km, 3
-            )
+                )
 
         restaurants_with_distance = dict(
             sorted(restaurants_with_distance.items(), key=lambda item: item[1])
