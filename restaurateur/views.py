@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import OuterRef, Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -128,13 +129,18 @@ def fetch_coordinates(apikey, address):
 
 @user_passes_test(is_manager, login_url="restaurateur:login")
 def view_orders(request):
-    order_items = Order.objects.unfinished().amount()
+    order_items = Order.objects.unfinished().annotate(
+        longitude=GeoPosition.objects.filter(address=OuterRef('address')).values_list('longitude'),
+        latitude=GeoPosition.objects.filter(address=OuterRef('address')).values_list('latitude'),
+    ).amount()
 
-    restaurants = Restaurant.objects.all()
-    restaurant_coordinates = []
-    for restaurant in restaurants:
-        restaurant_coordinates = {restaurant.id: GeoPosition.objects.coordinates(
-            address=restaurant.address)}
+    restaurants_with_coordinates = Restaurant.objects.annotate(
+        longitude=GeoPosition.objects.filter(address=OuterRef('address')).values_list('longitude'),
+        latitude=GeoPosition.objects.filter(address=OuterRef('address')).values_list('latitude'),
+    )
+    restaurant_coordinates = {}
+    for restaurant in restaurants_with_coordinates:
+        restaurant_coordinates[restaurant.id] = (restaurant.longitude, restaurant.latitude)
 
     order_with_restaurants = []
     for order in order_items:
@@ -145,7 +151,6 @@ def view_orders(request):
         ]
 
         for product in products:
-
             availability = [
                 item.restaurant
                 for item in product.menu_items.all()
@@ -156,12 +161,11 @@ def view_orders(request):
             else:
                 available_restaurants = available_restaurants & set(availability)
 
-        order_coordinates = GeoPosition.objects.coordinates(address=order.address)
         restaurants_with_distance = {}
         for restaurant in available_restaurants:
             if restaurant.id in restaurant_coordinates.keys():
                 restaurants_with_distance[restaurant] = round(
-                    distance.distance(order_coordinates, restaurant_coordinates[restaurant.id]).km, 3
+                    distance.distance((order.longitude, order.latitude), restaurant_coordinates[restaurant.id]).km, 3
                 )
 
         restaurants_with_distance = dict(
