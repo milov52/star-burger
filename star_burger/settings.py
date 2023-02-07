@@ -1,16 +1,13 @@
 import os
 
 import dj_database_url
-
 from environs import Env
-
 
 env = Env()
 env.read_env()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = env('STATIC_ROOT', os.path.join(BASE_DIR, 'staticfiles'))
-
 
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', True)
@@ -50,7 +47,6 @@ ROLLBAR = {
     'code_version': '1.0',
     'root': BASE_DIR,
 }
-
 
 ROOT_URLCONF = 'star_burger.urls'
 
@@ -94,7 +90,9 @@ MEDIA_URL = '/media/'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:////{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
+        default=env('POSTGRES_SETTINGS'),
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
 
@@ -129,11 +127,9 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
     os.path.join(BASE_DIR, "bundles"),
 ]
-
 
 API_YANDEX_GEO_KEY = env('API_YANDEX_GEO_KEY')
