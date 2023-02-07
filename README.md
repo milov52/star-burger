@@ -59,10 +59,17 @@ pip install -r requirements.txt
 `API_YANDEX_GEO_KEY` (Данный ключ позволит получать кооординаты ресторанов для их дальнейшей обработки).
 Получить его можно в [кабинете разработчика](https://developer.tech.yandex.ru/):
 
+`ROLLBAR_ACCESS_TOKEN` (токен для работы с системой логирования ROLLBAR)
+`ROLLBAR_ENVIROMENT` (enviroment для работы с системой логирования ROLLBAR)
+
+
+
 Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
 ```sh
 SECRET_KEY=django-insecure-0if40nf4nf93n4
 API_YANDEX_GEO_KEY=786f873c-64bf-4694-a6d3-1cf070b03c9d
+ROLLBAR_ACCESS_TOKEN=fb276b7d092c47bdb77bf57ce3c2d1cc
+ROLLBAR_ENVIROMENT=production
 ```
 
 Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
@@ -155,6 +162,9 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `API_YANDEX_GEO_KEY` —  Данный ключ позволит получать кооординаты ресторанов для их дальнейшей обработки.
 Получить его можно в [кабинете разработчика](https://developer.tech.yandex.ru/):
+- `ROLLBAR_ACCESS_TOKEN` (токен для работы с системой логирования ROLLBAR)
+- `ROLLBAR_ENVIROMENT` (enviroment для работы с системой логирования ROLLBAR)
+
 
 ## Цели проекта
 
