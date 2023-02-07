@@ -6,7 +6,7 @@ environs==9.3.2
 flake8==5.0.4
 geopy==2.3.0
 phonenumberslite==8.13.2
-Pillow==8.2.0
+Pillow==9.4.0
 requests==2.28.1
 dj_database_url==1.2.0
 rollbar==0.16.3
