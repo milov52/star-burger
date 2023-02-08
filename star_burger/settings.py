@@ -90,7 +90,7 @@ MEDIA_URL = '/media/'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=env('POSTGRES_SETTINGS'),
+        default=env('DB_URL'),
         conn_max_age=600,
         conn_health_checks=True,
     )

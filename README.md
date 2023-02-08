@@ -1,5 +1,7 @@
 # Сайт доставки еды Star Burger
 
+[Пример работающего сайта](https://starburger-serg.ru)
+
 Это сайт сети ресторанов Star Burger. Здесь можно заказать превосходные бургеры с доставкой на дом.
 
 ![скриншот сайта](https://dvmn.org/filer/canonical/1594651635/686/)
@@ -21,7 +23,7 @@
 
 Скачайте код:
 ```sh
-git clone https://github.com/devmanorg/star-burger.git
+git clone https://github.com/milov52/star-burger.git
 ```
 
 Перейдите в каталог проекта:
@@ -39,6 +41,16 @@ python --version
 
 Возможно, вместо команды `python` здесь и в остальных инструкциях этого README придётся использовать `python3`. Зависит это от операционной системы и от того, установлен ли у вас Python старой второй версии.
 
+Создайте базу данных Postgres и пользователя для работы с ней, выполнив последовательно следующие команды:
+```sh
+sudo su - postgres
+psql
+CREATE DATABASE <имя базы данных>;
+CREATE USER <пользователь postgres> WITH PASSWORD '<пароль для пользователя>';
+ALTER ROLE <имя пользователя> SET client_encoding TO 'utf8';
+GRANT ALL PRIVILEGES ON DATABASE <имя базы данных> TO <имя пользователя>;
+```
+
 В каталоге проекта создайте виртуальное окружение:
 ```sh
 python -m venv venv
@@ -54,25 +66,19 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Определите переменные окружения
-`SECRET_KEY` (секретный ключ для работы с Django)
-`API_YANDEX_GEO_KEY` (Данный ключ позволит получать кооординаты ресторанов для их дальнейшей обработки).
-Получить его можно в [кабинете разработчика](https://developer.tech.yandex.ru/):
-
-`ROLLBAR_ACCESS_TOKEN` (токен для работы с системой логирования ROLLBAR)
-`ROLLBAR_ENVIROMENT` (enviroment для работы с системой логирования ROLLBAR)
-
-
-
-Создать файл `.env` в каталоге `star_burger/` и положите туда такой код:
-```sh
-SECRET_KEY=django-insecure-0if40nf4nf93n4
-API_YANDEX_GEO_KEY=786f873c-64bf-4694-a6d3-1cf070b03c9d
-ROLLBAR_ACCESS_TOKEN=fb276b7d092c47bdb77bf57ce3c2d1cc
-ROLLBAR_ENVIROMENT=production
+Создать файл `.env` с переменными окружения в каталоге `star_burger/`:
 ```
+SECRET_KEY=django-insecure-0if40nf4nf93n4
+API_YANDEX_GEO_KEY=<Ваш API ключ от геокодера Яндекса>
+ROLLBAR_ACCESS_TOKEN=<Ваш токен от сервиса rollbar.com>
+ROLLBAR_ENVIROMENT=<Название среды разработки для отслеживания ошибок в rollbar.com>
+DB_URL=postgres://<пользователь postgres>:<пароль пользователя>@<хост базы данных>:<порт бд>/<имя бд>
+```
+Подробнее о `DB_URL` см здесь: https://github.com/jazzband/dj-database-url
 
-Создайте файл базы данных SQLite и отмигрируйте её следующей командой:
+Подробнее о `ROLLBAR_ACCESS_TOKEN` см здесь: [rollbar.com](https://rollbar.com)
+
+Выполните миграцию базы данных Postgresql следующей командой:
 
 ```sh
 python manage.py migrate
@@ -149,22 +155,223 @@ Parcel будет следить за файлами в каталоге `bundle
 
 ## Как запустить prod-версию сайта
 
-Собрать фронтенд:
+#### Арендуйте удаленный сервер и установите на нем последнюю версию OS Ubuntu
 
+Установите Postgresql, git, pip, venv, nginx:
+```sh
+sudo apt update
+sudo apt -y install git
+sudo apt -y install postgresql
+sudo apt -y install python3-pip
+sudo apt -y install python3-venv
+sudo apt -y install nginx
+```
+#### Создайте базу данных Postgres и пользователя для работы с ней, выполнив последовательно следующие команды:
+```sh
+sudo su - postgres
+psql
+CREATE DATABASE <имя базы данных>;
+CREATE USER <пользователь postgres> WITH PASSWORD '<пароль для пользователя>';
+ALTER ROLE <имя пользователя> SET client_encoding TO 'utf8';
+GRANT ALL PRIVILEGES ON DATABASE <имя базы данных> TO <имя пользователя>;
+```
+
+#### Скачайте код проекта в каталог `/opt` корневого каталога сервера:
+```sh
+cd /
+cd /opt
+git clone https://github.com/milov52/star-burger.git
+```
+
+#### Перейдите в каталог проекта:
+
+```sh
+cd /opt/star-burger
+```
+###### В каталоге проекта создайте виртуальное окружение:
+```sh
+python3 -m venv venv
+```
+###### Активируйте его:
+
+```sh
+source venv/bin/activate
+```
+
+###### Установите зависимости в виртуальное окружение:
+```sh
+pip install -r requirements.txt
+```
+#### Установите gunicorn в виртуальное окружение:
+```sh
+pip install gunicorn
+```
+#### В каталоге проекта и установите пакеты Node.js:
+
+```sh
+npm ci --dev
+```
+#### Соберите фронтенд:
 ```sh
 ./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
 ```
+#### Создайте файл `.env` с переменными окружения в каталоге `star_burger/`:
+```
+SECRET_KEY=django-insecure-0if40nf4nf93n4
+API_YANDEX_GEO_KEY=<Ваш API ключ от геокодера Яндекса>
+ROLLBAR_ACCESS_TOKEN=<Ваш токен от сервиса rollbar.com>
+ROLLBAR_ENVIROMENT=<Название среды разработки для отслеживания ошибок в rollbar.com>
+DB_URL=postgres://<пользователь postgres>:<пароль пользователя>@<хост базы данных>:<порт бд>/<имя бд>
+```
+Подробнее о `DB_URL` см здесь: https://github.com/jazzband/dj-database-url
 
-Настроить бэкенд: создать файл `.env` в каталоге `star_burger/` со следующими настройками:
+Подробнее о `ROLLBAR_ACCESS_TOKEN` см здесь: [rollbar.com](https://rollbar.com)
 
-- `DEBUG` — дебаг-режим. Поставьте `False`.
-- `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
-- `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
-- `API_YANDEX_GEO_KEY` —  Данный ключ позволит получать кооординаты ресторанов для их дальнейшей обработки.
-Получить его можно в [кабинете разработчика](https://developer.tech.yandex.ru/):
-- `ROLLBAR_ACCESS_TOKEN` (токен для работы с системой логирования ROLLBAR)
-- `ROLLBAR_ENVIROMENT` (enviroment для работы с системой логирования ROLLBAR)
 
+#### Выполните миграцию базы данных Postgresql следующей командой:
+
+```sh
+python3 manage.py migrate
+```
+#### Создайте суперпользователя:
+```sh
+python3 manage.py createsuperuser
+```
+#### Соберите статику для prod-версии:
+```sh
+python3 manage.py collectstatic
+```
+#### Создайте файл `star-burger.service` в каталоге `/etc/systemd/system` следующего содержания:
+```markdown
+[Unit]
+Description=Django service
+After=network.target
+After=nginx.service
+Requires=postgresql.service
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/star-burger/
+Environment="DEBUG=False"
+Environment="ALLOWED_HOSTS=<IP вашего сервера>"
+ExecStart=/opt/star-burger/venv/bin/gunicorn -b 127.0.0.1:8080 --workers 3 star_burger.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=on-failure RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+```
+#### Настройте автоматическое обновление сертификатов
+###### Создайте файл `certbot-renewal.service` в каталоге `/etc/systemd/system`:
+
+```markdown
+[Unit]
+Description=Certbot Renewal
+
+[Service]
+ExecStart=/usr/bin/certbot renew --force-renewal --post-hook "systemctl reload nginx.service"
+```
+###### Создайте файл `certbot-renewal.timer` в каталоге `/etc/systemd/system`:
+```markdown
+[Unit]
+Description=Timer for Certbot Renewal
+
+[Timer]
+OnBootSec=300
+OnUnitActiveSec=1w
+
+[Install]
+WantedBy=multi-user.target
+```
+#### Настройте автоматическую очистку сессий пользователей
+###### Создайте файл `starburger-clearsessions.service` в каталоге `/etc/systemd/system`:
+```markdown
+[Unit]
+Description=Django clearsessions
+Requires=star-burger.service
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/opt/star-burger/
+ExecStart=/opt/star-burger/venv/bin/python3 manage.py clearsessions
+```
+###### Создайте файл `starburger-clearsessions.timer` в каталоге `/etc/systemd/system`:
+```markdown
+[Unit]
+Description=Timer for Django clearsessions
+
+[Timer]
+OnBootSec=300
+OnUnitActiveSec=1w
+
+[Install]
+WantedBy=multi-user.target
+```
+
+#### Настройте Nginx
+###### Перейдите в каталог /etc/nginx/sites-enabled:
+```sh
+cd /etc/nginx/sites-enabled
+```
+###### Удалите в этом каталоге все файлы и создайте файл `starburger` следующего содержания:
+
+```markdown
+server {
+     server_name starburger.site www.starburger.site;
+     listen 80;
+     if ($host = www.starburger.site) {
+        return 301 https://$host$request_uri;
+     }
+}
+
+server {
+     server_name starburger.site www.starburger.site;
+     listen 443 ssl;
+     ssl_certificate /etc/letsencrypt/live/starburger.site/fullchain.pem;
+     ssl_certificate_key /etc/letsencrypt/live/starburger.site/privkey.pem;
+     include /etc/letsencrypt/options-ssl-nginx.conf;
+     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+     location /media/ {
+         alias /opt/star_burger/media/;
+     }
+     location /static/ {
+         alias /opt/star_burger/static/;
+     }
+     location /bundles/ {
+         alias /opt/star_burger/bundles/;
+     }
+     location / {
+         include '/etc/nginx/proxy_params';
+         proxy_pass http://127.0.0.1:8080/;
+     }
+}
+
+```
+#### Выполните команды для запуска демонов:
+```commandline
+systemctl start star-burger
+systemctl enable star-burger
+systemctl start certbot-renewal
+systemctl start starburger-clearsessions
+nginx -s reload
+```
+После успешного выполнения указанных действий сайт будет доступен по ссылке:
+```
+http://<HOST вашего сервера>
+```
+## Как быстро применить изменения из репозитория для вашего сайта
+
+Для того чтобы изменения в вашем репозитории быстро отобразились на сайте выполните команду, находясь в корневом каталоге проекта:
+
+```sh
+./deploy_star_burger.sh
+```
 
 ## Цели проекта
 
