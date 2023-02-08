@@ -322,34 +322,43 @@ cd /etc/nginx/sites-enabled
 
 ```markdown
 server {
-     server_name starburger.site www.starburger.site;
-     listen 80;
-     if ($host = www.starburger.site) {
-        return 301 https://$host$request_uri;
-     }
+
+    server_name starburger.site www.starburger.site;
+
+    location /media/ {
+        alias /opt/starburger/media/;  # replace the path with yours one
+    }
+
+    location /static/ {
+        alias /opt/starburger/static/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8080/;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/starburger.site/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/starburger.site/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
 }
 
-server {
-     server_name starburger.site www.starburger.site;
-     listen 443 ssl;
-     ssl_certificate /etc/letsencrypt/live/starburger.site/fullchain.pem;
-     ssl_certificate_key /etc/letsencrypt/live/starburger.site/privkey.pem;
-     include /etc/letsencrypt/options-ssl-nginx.conf;
-     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-     location /media/ {
-         alias /opt/star_burger/media/;
-     }
-     location /static/ {
-         alias /opt/star_burger/static/;
-     }
-     location /bundles/ {
-         alias /opt/star_burger/bundles/;
-     }
-     location / {
-         include '/etc/nginx/proxy_params';
-         proxy_pass http://127.0.0.1:8080/;
-     }
+server {
+    if ($host = starburger.site) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+    listen 80.249.144.67:80;
+
+    server_name starburger.site www.starburger.site;
+    return 404; # managed by Certbot
+
+
 }
 
 ```
