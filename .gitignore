@@ -144,3 +144,4 @@ cython_debug/
 .parcel-cache/
 .idea/
 .staticfiles/
+dump.json
