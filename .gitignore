@@ -145,3 +145,4 @@ cython_debug/
 .idea/
 .staticfiles/
 dump.json
+./bundles
