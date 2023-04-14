@@ -1,0 +1,49 @@
+version: '3.3'
+services:
+  backend:
+    build:
+      dockerfile: ../backend.Dockerfile
+    image: milov52/starburger-backend
+    restart: always
+    volumes:
+      - media_value:/app/media/
+      - static_value:/app/static/
+    env_file:
+      - .env
+    command: bash -c "python /opt/backend/manage.py migrate --noinput"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      dockerfile: ../frontend.Dockerfile
+    volumes:
+      - ./bundles:/opt/frontend/bundles
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - db_value:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+
+
+
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./bundles:/usr/share/nginx/html/
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    depends_on:
+      - backend
+
+volumes:
+  static_value:
+  media_value:
+  frontend_value:
+  db_value:
