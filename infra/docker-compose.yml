@@ -2,23 +2,26 @@ version: '3.3'
 services:
   backend:
     build:
-      dockerfile: ../backend.Dockerfile
-    image: milov52/starburger-backend
+      context: ../
+      dockerfile: backend.Dockerfile
+    container_name: star-burger-backend
     restart: always
     volumes:
       - media_value:/app/media/
       - static_value:/app/static/
     env_file:
       - .env
-    command: bash -c "python /opt/backend/manage.py migrate --noinput"
+    command: bash -c "python /app/manage.py migrate --noinput"
     depends_on:
       - db
 
   frontend:
     build:
-      dockerfile: ../frontend.Dockerfile
+      context: ../
+      dockerfile: frontend.Dockerfile
+    container_name: star-burger-frontend
     volumes:
-      - ./bundles:/opt/frontend/bundles
+      - ./bundles:/app/bundles
 
   db:
     image: postgres:13.0-alpine
@@ -26,9 +29,6 @@ services:
       - db_value:/var/lib/postgresql/data
     env_file:
       - .env
-
-
-
 
   nginx:
     image: nginx:1.19.3
