@@ -382,6 +382,44 @@ http://<HOST вашего сервера>
 ./deploy_star_burger.sh
 ```
 
+# Данные сервера
+
+server ip: 81.163.28.174
+deploy script: /opt/star-burger/newburger_docker.sh
+ssh проверяющего добавлен
+
+
+# DOCKER
+Docker и docker-compose должны быть предварительно установлены.
+Необходимые переменные окружения:
+
+
+## dev mode
+* Собираем контейнеры
+```docker-compose build```
+* Запускаем проект
+```docker-compose up -d```
+Caйт работает на http://localhost:8000
+
+
+## production mode
+* На сервере клонируем репозиторий в папку /opt
+* В папку /opt/star-burger добавляем .env c необходимыми переменными
+* * Устанавливаем права на запуск деплойного скрипта
+```chmod +x newburger.sh```
+* Запускаем скрипт
+```./newburger_docker.sh```
+* По окончании деплоя сайт работает по ip адресу сервера.
+* SSL и домен настраиваются дополнительно вручную
+
+
+# Данные сервера для Docker
+username: dockertest
+server ip: 81.163.30.48
+ssh проверяющего добавлен
+
+
+
 ## Цели проекта
 
 Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org). За основу был взят код проекта [FoodCart](https://github.com/Saibharath79/FoodCart).
