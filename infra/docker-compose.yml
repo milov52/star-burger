@@ -9,22 +9,19 @@ services:
     volumes:
       - media_value:/app/media/
       - static_value:/app/static/
-
     env_file:
-      - .env
+      - ../.env
     depends_on:
       - db
+    command: python ./manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
-
 
   frontend:
     build:
       context: ../
       dockerfile: frontend.Dockerfile
     container_name: star-burger-frontend
-    volumes:
-      - ./bundles:/app/bundles
     command: ./node_modules/.bin/parcel watch ./bundles-src/index.js --dist-dir bundles --public-url "./"
     ports:
       - "1234:1234"
@@ -34,7 +31,7 @@ services:
     volumes:
       - db_value:/var/lib/postgresql/data
     env_file:
-      - .env
+      - ../.env
     ports:
       - "5435:5432"
 

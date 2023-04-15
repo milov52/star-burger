@@ -10,5 +10,5 @@ RUN  pip3 install -r /app/requirements.txt --no-cache-dir
 
 COPY . .
 RUN python ./manage.py collectstatic --noinput
-CMD ["python", "./manage.py", "runserver", "0.0.0.0:8000" ]
+
 
