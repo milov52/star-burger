@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64  node:lts
+FROM node:lts
 WORKDIR /app
 
 COPY package*.json ./
