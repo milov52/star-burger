@@ -3,7 +3,6 @@ set -e
 
 cd /opt/star-burger/infra
 
-docker compose -f docker-compose.prod.yml down
 git fetch
 git pull
 docker compose -f docker-compose.prod.yml --build up -d
